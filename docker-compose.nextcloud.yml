@@ -1,0 +1,52 @@
+version: '3.5'
+
+x-base: &base
+    restart: always
+    networks:
+        - internal
+
+x-env: &env
+    env_file:
+        - ${ENV_FILE}
+
+services:  
+    nextcloud_db:
+        <<: *base
+        image: postgres:12-alpine
+        container_name: nextcloud-db
+        hostname: nextcloud-db
+        restart: always
+        volumes:
+            - nextcloud_db:/var/lib/postgresql/data
+        environment:
+            - POSTGRES_DB=nextcloud_db
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=mypassword
+
+    nextcloud:
+        <<: *base
+        image: nextcloud:20.0.7-apache
+        container_name: nextcloud
+        hostname: nextcloud
+        ports:
+            - 8080:80
+        volumes:
+            - nextcloud:/var/www/html
+        environment:
+            - POSTGRES_HOST=nextcloud-db
+            - POSTGRES_DB=nextcloud_db
+            - POSTGRES_USER=postgres # will access postgres over 5432
+            - POSTGRES_PASSWORD=mypassword
+        depends_on:
+            - nextcloud_db
+
+volumes:
+    nextcloud_db:
+        name: nextcloud_db
+    nextcloud:
+        name: nextcloud
+        driver: local
+        driver_opts:
+          type: 'none'
+          o: 'bind'
+          device: ${NEXTCLOUD_DATA_LOCATION}
