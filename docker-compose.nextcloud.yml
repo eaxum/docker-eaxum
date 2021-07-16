@@ -45,8 +45,8 @@ volumes:
         name: nextcloud_db
     nextcloud:
         name: nextcloud
-        driver: local
-        driver_opts:
-          type: 'none'
-          o: 'bind'
-          device: ${NEXTCLOUD_DATA_LOCATION}
+        # driver: local
+        # driver_opts:
+        #   type: 'none'
+        #   o: 'bind'
+        #   device: ${NEXTCLOUD_DATA_LOCATION}
