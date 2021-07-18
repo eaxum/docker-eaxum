@@ -46,8 +46,6 @@ services:
     zou-event:
         <<: *base
         <<: *env
-        volumes:
-            - /home/asuna/eaxum/zou/zou/:/usr/local/lib/python3.7/site-packages/zou:ro
         container_name: ${COMPOSE_PROJECT_NAME}-zou-event
         image: eaxum/zou:$EAXUM_ZOU_VERSION
         <<: *previews
