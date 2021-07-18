@@ -45,8 +45,8 @@ services:
 volumes:
     svn_data:
         name: svn_data
-        # driver: local
-        # driver_opts:
-        #   type: 'none'
-        #   o: 'bind'
-        #   device: ${SVN_DATA_LOCATION}
+        driver: local
+        driver_opts:
+          type: 'none'
+          o: 'bind'
+          device: ${SVN_DATA_LOCATION}
