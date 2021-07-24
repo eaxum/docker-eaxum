@@ -13,6 +13,7 @@ services:
     genesys:
         <<: *base
         <<: *env
+        user: root
         container_name: ${COMPOSE_PROJECT_NAME}-genesys
         image: eaxum/genesys:$GENESYS_VERSION
         command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :5002 genesys.app:app"
@@ -22,31 +23,40 @@ services:
     genesys-jobs:
         <<: *base
         <<: *env
+        user: root
         volumes:
             - svn_data:/opt/svn
         container_name: ${COMPOSE_PROJECT_NAME}-genesys-jobs
         image: eaxum/genesys:$GENESYS_VERSION
         command: "rq worker -c genesys.job_settings"
     
+    # svn:
+    #     <<: *base
+    #     <<: *env
+    #     image: svnedge/app:6.0.2-9
+    #     container_name: svnedge
+    #     hostname: svnedge
+    #     ports:
+    #         - "18080:18080"
+    #         - "3343:3343"
+    #     environment:
+    #         SET_PERMS: "true"
+    #     volumes:
+    #         - svn_data:/home/svnedge/csvn/data
     svn:
         <<: *base
         <<: *env
-        image: svnedge/app:6.0.2-9
-        container_name: svnedge
-        hostname: svnedge
-        ports:
-            - "18080:18080"
-            - "3343:3343"
-        environment:
-            SET_PERMS: "true"
+        image: eaxum/svn:0.0.4
+        container_name: ${COMPOSE_PROJECT_NAME}-svn
+        hostname: svn
         volumes:
-            - svn_data:/home/svnedge/csvn/data
+            - svn_data:/var/svn
         
 volumes:
     svn_data:
         name: svn_data
-        driver: local
-        driver_opts:
-          type: 'none'
-          o: 'bind'
-          device: ${SVN_DATA_LOCATION}
+        # driver: local
+        # driver_opts:
+        #   type: 'none'
+        #   o: 'bind'
+        #   device: ${SVN_DATA_LOCATION}

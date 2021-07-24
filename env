@@ -11,8 +11,11 @@ DB_HOST=db
 ENABLE_GENESIS=True
 GENESIS_HOST=http://eaxum-genesys
 GENESIS_PORT=5002
-SVN_PARENT_PATH=/opt/svn/repositories
-SVN_PARENT_URL=file:////opt/svn/repositories
+LOGIN_NAME=desktop_login
+#SVN_PARENT_PATH=/opt/svn/repositories
+#SVN_PARENT_URL=file:////opt/svn/repositories
+SVN_PARENT_PATH=/opt/svn
+SVN_PARENT_URL=file:////opt/svn
 SVN_SERVER_PARENT_URL=http://localhost/svn
 
 EVENT_HANDLERS_FOLDER=/opt/zou/plugins
@@ -36,6 +39,11 @@ LDAP_FALLBACK=False
 LDAP_USER=super-user
 LDAP_PASSWORD=eaxumdef0007
 LDAP_EMAIL_DOMAIN=eaxum.com
+
+AuthLDAPURL=ldap://eaxum-ldap:389/DC=eaxum,DC=com?uid
+AuthLDAPBindDN=uid=super-user,ou=users,dc=eaxum,dc=com
+AuthLDAPBindPassword=eaxumdef0007
+#RequireLDAPGroup=
 
 PYTHONUNBUFFERED=TRUE
 
