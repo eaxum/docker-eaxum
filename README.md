@@ -1,6 +1,6 @@
 # Docker-cgwire
 
-Docker compose for [Kitsu](https://kitsu.cg-wire.com/), [Zou](https://zou.cg-wire.com/), [Genesys](https://github.com/eaxum/genesys), [Subversion Edge](https://www.collab.net/downloads/subversion), and [Nextcloud](https://nextcloud.com/)
+Docker compose for [Kitsu](https://kitsu.cg-wire.com/), [Zou](https://zou.cg-wire.com/), [Genesys](https://github.com/eaxum/genesys), and [Nextcloud](https://nextcloud.com/)
 
 ## Usage
 
