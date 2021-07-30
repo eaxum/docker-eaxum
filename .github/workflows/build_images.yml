@@ -23,5 +23,5 @@ jobs:
 
       - name: Run build script
         run: |
-          ./build -i -u -g -l
+          ./build.sh -i -u -g -l
         
