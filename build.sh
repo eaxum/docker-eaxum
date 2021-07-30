@@ -48,8 +48,8 @@ function compose_down() {
 function init_zou() {
     echo "${GREEN}INIT ZOU"
     sleep 2
-    docker-compose exec db  su - postgres -c "createdb -T template0 -E UTF8 --owner postgres zoudb"
-    docker-compose exec zou-app sh init_zou.sh
+    docker-compose exec -T db  su - postgres -c "createdb -T template0 -E UTF8 --owner postgres zoudb"
+    docker-compose exec -T zou-app sh init_zou.sh
 }
 
 function init_ldap() {
