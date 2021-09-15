@@ -7,7 +7,6 @@ x-base: &base
 
 x-env: &env
     env_file:
-        # - ${ENV_FILE}
         - ${ENV_FILE:-./env}
 
 x-backend-volumes: &backend_volumes
@@ -15,22 +14,12 @@ x-backend-volumes: &backend_volumes
         - 'previews:${PREVIEW_FOLDER:?}'
         - 'tmp:${TMP_DIR:-/tmp/zou}'
 
-# x-previews: &previews
-#     volumes:
-#         - 'previews:${PREVIEW_FOLDER}'
-
-# x-temp: &temp
-#     volumes:
-#         - 'temp:${TMP_DIR}'
-
 services:
     kitsu:
         <<: *base
         <<: *env
-        # container_name: ${COMPOSE_PROJECT_NAME}-kitsu
-        # image: eaxum/kitsu:$KITSU_VERSION
         container_name: ${COMPOSE_PROJECT_NAME:?}-kitsu
-        image: registry.gitlab.com/mathbou/docker-cgwire/kitsu:${KITSU_VERSION:-latest}
+        image: eaxum/kitsu:${KITSU_VERSION:-latest}
         depends_on:
             - zou-app
             - zou-event
@@ -43,26 +32,22 @@ services:
     zou-app:
         <<: *base
         <<: *env
-        # container_name: ${COMPOSE_PROJECT_NAME}-zou-app
-        # image: eaxum/zou:$EAXUM_ZOU_VERSION
+        volumes: 
+            - /home/asuna/aderemi-adesada/genesys_kitsu_addon/event_handlers/:/usr/local/lib/python3.7/site-packages/zou/app/services/genesys_addon/event_handlers
         container_name: ${COMPOSE_PROJECT_NAME:?}-zou-app
-        image: registry.gitlab.com/mathbou/docker-cgwire/zou:${ZOU_VERSION:-latest}
+        image: eaxum/zou:${ZOU_VERSION:-latest}
         depends_on:
           - db
-        # <<: *previews
-        # <<: *temp
         <<: *backend_volumes
         command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :5000 zou.app:app"
 
     zou-event:
         <<: *base
         <<: *env
-        # container_name: ${COMPOSE_PROJECT_NAME}-zou-event
-        # image: eaxum/zou:$EAXUM_ZOU_VERSION
+        volumes: 
+            - /home/asuna/aderemi-adesada/genesys_kitsu_addon/event_handlers/:/usr/local/lib/python3.7/site-packages/zou/app/services/genesys_addon/event_handlers
         container_name: ${COMPOSE_PROJECT_NAME:?}-zou-event
-        image: registry.gitlab.com/mathbou/docker-cgwire/zou:${ZOU_VERSION:-latest}
-        # <<: *previews
-        # <<: *temp
+        image: eaxum/zou:${ZOU_VERSION:-latest}
         <<: *backend_volumes
         depends_on:
           - redis
@@ -71,26 +56,16 @@ services:
     zou-jobs:
         <<: *base
         <<: *env
-        # container_name: ${COMPOSE_PROJECT_NAME}-zou-jobs
-        # image: eaxum/zou:$EAXUM_ZOU_VERSION
+        volumes: 
+            - /home/asuna/aderemi-adesada/genesys_kitsu_addon/event_handlers/:/usr/local/lib/python3.7/site-packages/zou/app/services/genesys_addon/event_handlers
         container_name: ${COMPOSE_PROJECT_NAME:?}-zou-jobs
-        image: registry.gitlab.com/mathbou/docker-cgwire/zou:${ZOU_VERSION:-latest}
-        # <<: *previews
-        # <<: *temp
+        image: eaxum/zou:${ZOU_VERSION:-latest}
         <<: *backend_volumes
         depends_on:
             - redis
         command: "rq worker -c zou.job_settings"
 
     db:
-        # <<: *base
-        # container_name: ${COMPOSE_PROJECT_NAME}-db-${DB_VERSION}
-        # image: postgres:${DB_VERSION}-alpine
-        # volumes:
-        #     - 'db:/var/lib/postgresql/data'
-        #     - ./db/pg_ctl.conf:/etc/postgresql/${DB_VERSION}/main/pg_ctl.conf:ro
-        # environment:
-        #     - POSTGRES_PASSWORD=${DB_PASSWORD}
         # ports:
         #     - '5432:5432'
         <<: *base
@@ -103,11 +78,6 @@ services:
             - POSTGRES_PASSWORD=${DB_PASSWORD:?}
 
     redis:
-        # <<: *base
-        # container_name: ${COMPOSE_PROJECT_NAME}-redis
-        # image: redis:6.2.1-alpine
-        # volumes:
-        #     - 'redis:/data'
         <<: *base
         container_name: ${COMPOSE_PROJECT_NAME:?}-redis
         image: redis:alpine
@@ -181,26 +151,19 @@ volumes:
     # kitsu:
     #     name: kitsu
     db:
-        # name: ${COMPOSE_PROJECT_NAME}-db-${DB_VERSION}
         name: ${COMPOSE_PROJECT_NAME:?}-db-${DB_VERSION:?}
     ldap_data_base:
         name: ${COMPOSE_PROJECT_NAME}-ldap_data_base
     ldap_config:
         name: ${COMPOSE_PROJECT_NAME}-ldap_config
     redis:
-        # name: ${COMPOSE_PROJECT_NAME}-redis
         name: ${COMPOSE_PROJECT_NAME:?}-redis
     previews:
-        # name: ${COMPOSE_PROJECT_NAME}-previews
         name: ${COMPOSE_PROJECT_NAME:?}-previews
     tmp:
         name: ${COMPOSE_PROJECT_NAME:?}-tmp
-
-    # temp:
-    #     name: ${COMPOSE_PROJECT_NAME}-temp
         
 
 networks:
     internal:
-        # name: ${COMPOSE_PROJECT_NAME}-internal
         name: ${COMPOSE_PROJECT_NAME:?}-internal

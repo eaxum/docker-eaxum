@@ -27,7 +27,7 @@ function build_images() {
 function compose_up() {
     echo "${YELLOW}START CONTAINERS"
     if [ ${BUILD} == 1 ]; then
-        eval "docker-compose -f docker-compose.yml -f docker-compose.build.yml  up -d"
+        eval "docker-compose -f docker-compose.yml $nextcloud_file $genesys_file -f docker-compose.build.yml  up -d"
     else
         eval "docker-compose -f docker-compose.yml $nextcloud_file $genesys_file pull --include-deps"
         eval "docker-compose -f docker-compose.yml $nextcloud_file $genesys_file up -d"
@@ -121,11 +121,6 @@ for i in "$@"; do
             echo "${CYAN}INSTALL GENESYS"
             shift
             ;;
-        -u | --init-ldap-users)
-            INIT_LDAP=1
-            echo "${CYAN}INITIALIZE LDAP USERS"
-            shift
-            ;;
         -h | --help)
             echo "
     Usage:
@@ -139,7 +134,6 @@ for i in "$@"; do
         -d, --down              Compose down the stack
         -g | --genesys          add genesys
         -n | --nextcloud        add nextcloud
-        -u | --init-ldap-users  INITIALIZE LDAP USERS FOR KITSU
         -h, --help              Show this help
             "
             exit 0
@@ -165,8 +159,5 @@ if [ $DOWN == 0 ]; then
 
     compose_up
     init_zou
-
-    if [ $INIT_LDAP == 1 ]; then
-        init_ldap
-    fi
+    init_ldap
 fi
