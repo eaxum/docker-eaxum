@@ -54,13 +54,13 @@ function init_zou() {
     dbowner=postgres
     dbname=zoudb
     
-    if docker-compose exec db psql -U ${dbowner} ${dbname} -c '' 2>&1; then
+    if docker-compose exec -T db psql -U ${dbowner} ${dbname} -c '' 2>&1; then
         echo "${GREEN}UPGRADE ZOU"
-        docker-compose exec zou-app sh upgrade_zou.sh
+        docker-compose exec -T zou-app sh upgrade_zou.sh
     else
         echo "${GREEN}INIT ZOU"
-        docker-compose exec db  su - postgres -c "createdb -T template0 -E UTF8 --owner ${dbowner} ${dbname}"
-        docker-compose exec zou-app sh init_zou.sh
+        docker-compose exec -T db  su - postgres -c "createdb -T template0 -E UTF8 --owner ${dbowner} ${dbname}"
+        docker-compose exec -T zou-app sh init_zou.sh
     fi
 }
 
