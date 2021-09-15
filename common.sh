@@ -5,7 +5,6 @@ BLUE="\e[1;94m"
 MAGENTA="\e[1;95m"
 YELLOW="\e[1;93m"
 GREEN="\e[1;92m"
-WHITE="\[\033[0;37m\]"
 ERROR="\e[1;97;48;5;1m"
 DEFAULT="\e[0;0;0m"
 

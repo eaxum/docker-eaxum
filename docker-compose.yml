@@ -7,80 +7,110 @@ x-base: &base
 
 x-env: &env
     env_file:
-        - ${ENV_FILE}
+        # - ${ENV_FILE}
+        - ${ENV_FILE:-./env}
 
-x-previews: &previews
+x-backend-volumes: &backend_volumes
     volumes:
-        - 'previews:${PREVIEW_FOLDER}'
+        - 'previews:${PREVIEW_FOLDER:?}'
+        - 'tmp:${TMP_DIR:-/tmp/zou}'
 
-x-temp: &temp
-    volumes:
-        - 'temp:${TMP_DIR}'
+# x-previews: &previews
+#     volumes:
+#         - 'previews:${PREVIEW_FOLDER}'
+
+# x-temp: &temp
+#     volumes:
+#         - 'temp:${TMP_DIR}'
 
 services:
     kitsu:
         <<: *base
         <<: *env
-        container_name: ${COMPOSE_PROJECT_NAME}-kitsu
-        image: eaxum/kitsu:$KITSU_VERSION
+        # container_name: ${COMPOSE_PROJECT_NAME}-kitsu
+        # image: eaxum/kitsu:$KITSU_VERSION
+        container_name: ${COMPOSE_PROJECT_NAME:?}-kitsu
+        image: registry.gitlab.com/mathbou/docker-cgwire/kitsu:${KITSU_VERSION:-latest}
         depends_on:
             - zou-app
             - zou-event
             - zou-jobs
-        volumes:
-            - kitsu:/opt/kitsu/dist
+        # volumes:
+        #     - kitsu:/opt/kitsu/dist
         ports:
-            - '${PORT}:80'
+            - '${PORT:-83}:80'
 
     zou-app:
         <<: *base
         <<: *env
-        container_name: ${COMPOSE_PROJECT_NAME}-zou-app
-        image: eaxum/zou:$EAXUM_ZOU_VERSION
+        # container_name: ${COMPOSE_PROJECT_NAME}-zou-app
+        # image: eaxum/zou:$EAXUM_ZOU_VERSION
+        container_name: ${COMPOSE_PROJECT_NAME:?}-zou-app
+        image: registry.gitlab.com/mathbou/docker-cgwire/zou:${ZOU_VERSION:-latest}
         depends_on:
           - db
-        <<: *previews
-        <<: *temp
+        # <<: *previews
+        # <<: *temp
+        <<: *backend_volumes
         command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :5000 zou.app:app"
 
     zou-event:
         <<: *base
         <<: *env
-        container_name: ${COMPOSE_PROJECT_NAME}-zou-event
-        image: eaxum/zou:$EAXUM_ZOU_VERSION
-        <<: *previews
-        <<: *temp
+        # container_name: ${COMPOSE_PROJECT_NAME}-zou-event
+        # image: eaxum/zou:$EAXUM_ZOU_VERSION
+        container_name: ${COMPOSE_PROJECT_NAME:?}-zou-event
+        image: registry.gitlab.com/mathbou/docker-cgwire/zou:${ZOU_VERSION:-latest}
+        # <<: *previews
+        # <<: *temp
+        <<: *backend_volumes
         depends_on:
           - redis
-        command: "gunicorn --error-logfile - --access-logfile - -w 1 -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -b :5001 zou.event_stream:app"
+        command: "gunicorn --error-logfile - --access-logfile - -w 3 -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -b :5001 zou.event_stream:app"
 
     zou-jobs:
         <<: *base
         <<: *env
-        container_name: ${COMPOSE_PROJECT_NAME}-zou-jobs
-        image: eaxum/zou:$EAXUM_ZOU_VERSION
-        <<: *previews
-        <<: *temp
+        # container_name: ${COMPOSE_PROJECT_NAME}-zou-jobs
+        # image: eaxum/zou:$EAXUM_ZOU_VERSION
+        container_name: ${COMPOSE_PROJECT_NAME:?}-zou-jobs
+        image: registry.gitlab.com/mathbou/docker-cgwire/zou:${ZOU_VERSION:-latest}
+        # <<: *previews
+        # <<: *temp
+        <<: *backend_volumes
         depends_on:
             - redis
         command: "rq worker -c zou.job_settings"
 
     db:
+        # <<: *base
+        # container_name: ${COMPOSE_PROJECT_NAME}-db-${DB_VERSION}
+        # image: postgres:${DB_VERSION}-alpine
+        # volumes:
+        #     - 'db:/var/lib/postgresql/data'
+        #     - ./db/pg_ctl.conf:/etc/postgresql/${DB_VERSION}/main/pg_ctl.conf:ro
+        # environment:
+        #     - POSTGRES_PASSWORD=${DB_PASSWORD}
+        # ports:
+        #     - '5432:5432'
         <<: *base
-        container_name: ${COMPOSE_PROJECT_NAME}-db-${DB_VERSION}
-        image: postgres:${DB_VERSION}-alpine
+        container_name: ${COMPOSE_PROJECT_NAME:?}-db-${DB_VERSION:?}
+        image: postgres:${DB_VERSION:?}-alpine
         volumes:
             - 'db:/var/lib/postgresql/data'
-            - ./db/pg_ctl.conf:/etc/postgresql/${DB_VERSION}/main/pg_ctl.conf:ro
+            - ./db/pg_ctl.conf:/etc/postgresql/${DB_VERSION:?}/main/pg_ctl.conf:ro
         environment:
-            - POSTGRES_PASSWORD=${DB_PASSWORD}
-        ports:
-            - '5432:5432'
+            - POSTGRES_PASSWORD=${DB_PASSWORD:?}
 
     redis:
+        # <<: *base
+        # container_name: ${COMPOSE_PROJECT_NAME}-redis
+        # image: redis:6.2.1-alpine
+        # volumes:
+        #     - 'redis:/data'
         <<: *base
-        container_name: ${COMPOSE_PROJECT_NAME}-redis
-        image: redis:6.2.1-alpine
+        container_name: ${COMPOSE_PROJECT_NAME:?}-redis
+        image: redis:alpine
         volumes:
             - 'redis:/data'
     
@@ -148,22 +178,29 @@ services:
             - ./nginx.conf:/etc/nginx/conf.d/default.conf
         
 volumes:
-    kitsu:
-        name: kitsu
+    # kitsu:
+    #     name: kitsu
     db:
-        name: ${COMPOSE_PROJECT_NAME}-db-${DB_VERSION}
+        # name: ${COMPOSE_PROJECT_NAME}-db-${DB_VERSION}
+        name: ${COMPOSE_PROJECT_NAME:?}-db-${DB_VERSION:?}
     ldap_data_base:
         name: ${COMPOSE_PROJECT_NAME}-ldap_data_base
     ldap_config:
         name: ${COMPOSE_PROJECT_NAME}-ldap_config
     redis:
-        name: ${COMPOSE_PROJECT_NAME}-redis
+        # name: ${COMPOSE_PROJECT_NAME}-redis
+        name: ${COMPOSE_PROJECT_NAME:?}-redis
     previews:
-        name: ${COMPOSE_PROJECT_NAME}-previews
+        # name: ${COMPOSE_PROJECT_NAME}-previews
+        name: ${COMPOSE_PROJECT_NAME:?}-previews
+    tmp:
+        name: ${COMPOSE_PROJECT_NAME:?}-tmp
 
-    temp:
-        name: ${COMPOSE_PROJECT_NAME}-temp
+    # temp:
+    #     name: ${COMPOSE_PROJECT_NAME}-temp
+        
 
 networks:
     internal:
-        name: ${COMPOSE_PROJECT_NAME}-internal
+        # name: ${COMPOSE_PROJECT_NAME}-internal
+        name: ${COMPOSE_PROJECT_NAME:?}-internal
