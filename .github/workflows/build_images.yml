@@ -32,5 +32,5 @@ jobs:
           source ./env
           docker push eaxum/genesys:$GENESYS_VERSION
           docker push eaxum/kitsu:$KITSU_VERSION
-          docker push eaxum/zou:$EAXUM_ZOU_VERSION
+          docker push eaxum/zou:$ZOU_VERSION
         
