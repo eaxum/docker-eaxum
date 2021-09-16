@@ -66,6 +66,7 @@ function init_zou() {
 
 function init_ldap() {
     echo "${GREEN}INIT LDAP"
+    sleep 10
     docker cp ./ldap_acl.ldif  eaxum-ldap:/tmp/ldap_acl.ldif
     docker cp ./ldap_default.ldif  eaxum-ldap:/tmp/ldap_default.ldif
     docker exec eaxum-ldap ldapmodify  -Y EXTERNAL -H ldapi:/// -f /tmp/ldap_acl.ldif
