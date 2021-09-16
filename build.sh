@@ -51,24 +51,16 @@ function compose_down() {
 
 
 function init_zou() {
-    # echo "${GREEN}INIT ZOU"
-    # sleep 2
-    # docker-compose exec -T db  su - postgres -c "createdb -T template0 -E UTF8 --owner postgres zoudb"
-    # docker-compose exec -T zou-app sh init_zou.sh
-
     dbowner=postgres
     dbname=zoudb
     
     if docker-compose exec -T db psql -U ${dbowner} ${dbname} -c '' 2>&1; then
         echo "${GREEN}UPGRADE ZOU"
-        docker exec eaxum-zou-app sh upgrade_zou.sh
-        # docker-compose exec -T zou-app sh upgrade_zou.sh
+        docker-compose exec -T zou-app sh upgrade_zou.sh
     else
         echo "${GREEN}INIT ZOU"
-        docker exec eaxum-db-12  su - postgres -c "createdb -T template0 -E UTF8 --owner ${dbowner} ${dbname}"
-        docker exec eaxum-zou-app sh init_zou.sh
-        # docker-compose exec -T db  su - postgres -c "createdb -T template0 -E UTF8 --owner ${dbowner} ${dbname}"
-        # docker-compose exec -T zou-app sh init_zou.sh
+        docker-compose exec -T db  su - postgres -c "createdb -T template0 -E UTF8 --owner ${dbowner} ${dbname}"
+        docker-compose exec -T zou-app sh init_zou.sh
     fi
 }
 
@@ -80,7 +72,7 @@ function init_ldap() {
     docker exec eaxum-ldap ldapmodify  -Y EXTERNAL -H ldapi:/// -f /tmp/ldap_default.ldif
     ./sync_ldap.sh
     sleep 2
-    # docker-compose exec -T db  psql -U postgres zoudb -c "UPDATE person SET role = 'admin' WHERE desktop_login = 'super-user';"
+    docker-compose exec -T db  psql -U postgres zoudb -c "UPDATE person SET role = 'admin' WHERE desktop_login = 'super-user';"
 }
 
 # --------------------------------------------------------------
