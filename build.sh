@@ -51,7 +51,7 @@ function compose_down() {
 
 
 function init_zou() {
-    echo "${GREEN}INIT ZOU"
+    # echo "${GREEN}INIT ZOU"
     # sleep 2
     # docker-compose exec -T db  su - postgres -c "createdb -T template0 -E UTF8 --owner postgres zoudb"
     # docker-compose exec -T zou-app sh init_zou.sh
@@ -65,7 +65,7 @@ function init_zou() {
         # docker-compose exec -T zou-app sh upgrade_zou.sh
     else
         echo "${GREEN}INIT ZOU"
-        docker exec eaxum-db  su - postgres -c "createdb -T template0 -E UTF8 --owner ${dbowner} ${dbname}"
+        docker exec eaxum-db-12  su - postgres -c "createdb -T template0 -E UTF8 --owner ${dbowner} ${dbname}"
         docker exec eaxum-zou-app sh init_zou.sh
         # docker-compose exec -T db  su - postgres -c "createdb -T template0 -E UTF8 --owner ${dbowner} ${dbname}"
         # docker-compose exec -T zou-app sh init_zou.sh
