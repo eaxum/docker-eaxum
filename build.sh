@@ -75,6 +75,10 @@ function init_zou() {
 
 function init_ldap() {
     echo "${GREEN}INIT LDAP"
+    
+    docker-compose exec -T db  su - postgres -c "createdb -T template0 -E UTF8 --owner postgres zoudb"
+    docker-compose exec -T zou-app sh init_zou.sh
+
     docker cp ./ldap_acl.ldif  eaxum-ldap:/tmp/ldap_acl.ldif
     docker cp ./ldap_default.ldif  eaxum-ldap:/tmp/ldap_default.ldif
     docker exec eaxum-ldap ldapmodify  -Y EXTERNAL -H ldapi:/// -f /tmp/ldap_acl.ldif
