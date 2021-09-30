@@ -32,8 +32,6 @@ services:
     zou-app:
         <<: *base
         <<: *env
-        volumes: 
-            - /home/asuna/aderemi-adesada/genesys_kitsu_addon/event_handlers/:/usr/local/lib/python3.7/site-packages/zou/app/services/genesys_addon/event_handlers
         container_name: ${COMPOSE_PROJECT_NAME:?}-zou-app
         image: eaxum/zou:${ZOU_VERSION:-latest}
         depends_on:
@@ -44,8 +42,6 @@ services:
     zou-event:
         <<: *base
         <<: *env
-        volumes: 
-            - /home/asuna/aderemi-adesada/genesys_kitsu_addon/event_handlers/:/usr/local/lib/python3.7/site-packages/zou/app/services/genesys_addon/event_handlers
         container_name: ${COMPOSE_PROJECT_NAME:?}-zou-event
         image: eaxum/zou:${ZOU_VERSION:-latest}
         <<: *backend_volumes
@@ -56,8 +52,6 @@ services:
     zou-jobs:
         <<: *base
         <<: *env
-        volumes: 
-            - /home/asuna/aderemi-adesada/genesys_kitsu_addon/event_handlers/:/usr/local/lib/python3.7/site-packages/zou/app/services/genesys_addon/event_handlers
         container_name: ${COMPOSE_PROJECT_NAME:?}-zou-jobs
         image: eaxum/zou:${ZOU_VERSION:-latest}
         <<: *backend_volumes
