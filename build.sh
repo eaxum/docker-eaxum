@@ -158,6 +158,6 @@ if [ $DOWN == 0 ]; then
     fi
 
     compose_up
-    init_zou
-    init_ldap
+    # init_zou
+    # init_ldap
 fi
