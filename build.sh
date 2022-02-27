@@ -27,9 +27,9 @@ function build_images() {
 function compose_up() {
     echo "${YELLOW}START CONTAINERS"
     if [ ${BUILD} == 1 ]; then
-        eval "docker-compose -f docker-compose.yml $nextcloud_file $genesys_file -f docker-compose.build.yml  up -d"
+        eval "docker-compose -f docker-comp-g ose.yml $nextcloud_file $genesys_file -f docker-compose.build.yml  up -d"
     else
-        eval "docker-compose -f docker-compose.yml $nextcloud_file $genesys_file pull --include-deps"
+        # eval "docker-compose -f docker-compose.yml $nextcloud_file $genesys_file pull --include-deps"
         eval "docker-compose -f docker-compose.yml $nextcloud_file $genesys_file up -d"
     fi
     if [[ "${ENABLE_JOB_QUEUE}" != "True" ]]; then
