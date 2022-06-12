@@ -13,7 +13,7 @@ services:
     genesys:
         <<: *base
         <<: *env
-        user: root
+        # user: root
         container_name: ${COMPOSE_PROJECT_NAME}-genesys
         image: eaxum/genesys:$GENESYS_VERSION
         command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :5002 genesys.app:app"
@@ -23,7 +23,7 @@ services:
     genesys-jobs:
         <<: *base
         <<: *env
-        user: root
+        # user: root
         volumes:
             - svn_data:/opt/svn
         container_name: ${COMPOSE_PROJECT_NAME}-genesys-jobs
@@ -46,7 +46,7 @@ services:
     svn:
         <<: *base
         <<: *env
-        image: eaxum/svn:0.0.4
+        image: eaxum/svn:0.0.7
         container_name: ${COMPOSE_PROJECT_NAME}-svn
         hostname: svn
         volumes:
