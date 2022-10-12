@@ -51,7 +51,7 @@ fi
 
 
 function db-compose() {
-    docker-compose -f docker-compose.dbUpgrade.yml "$@"
+    docker compose -f docker-compose.dbUpgrade.yml "$@"
 }
 
 source_env ${ENV_FILE}

@@ -46,7 +46,7 @@ services:
     svn:
         <<: *base
         <<: *env
-        image: eaxum/svn:0.0.7
+        image: eaxum/svn:0.0.8
         container_name: ${COMPOSE_PROJECT_NAME}-svn
         hostname: svn
         volumes:
