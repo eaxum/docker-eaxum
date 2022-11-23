@@ -1,16 +1,16 @@
-COMPOSE_PROJECT_NAME=eaxum
+COMPOSE_PROJECT_NAME=colory
 
 # KITSU_VERSION=0.12.63
 KITSU_VERSION=0.15.17
 ZOU_VERSION=0.15.11
-# EAXUM_ZOU_VERSION=0.0.15
+# colory_ZOU_VERSION=0.0.15
 GENESYS_VERSION=0.0.28
 
 KV_HOST=redis
 DB_HOST=db
 
 ENABLE_GENESIS=True
-GENESIS_HOST=http://eaxum-genesys
+GENESIS_HOST=http://colory-genesys
 GENESIS_PORT=5002
 LOGIN_NAME=desktop_login
 #SVN_PARENT_PATH=/opt/svn/repositories
@@ -25,9 +25,9 @@ ENABLE_JOB_QUEUE=True
 PREVIEW_FOLDER=/opt/zou/previews
 TMP_DIR=/tmp/zou
 
-EVENT_STREAM_HOST=eaxum-zou-event
-# KITSU_API_TARGET=http://eaxum-zou-app:5000/
-# KITSU_EVENT_TARGET=http://eaxum-zou-event:5001/
+EVENT_STREAM_HOST=colory-zou-event
+# KITSU_API_TARGET=http://colory-zou-app:5000/
+# KITSU_EVENT_TARGET=http://colory-zou-event:5001/
 
 PORT=83
 
@@ -35,19 +35,19 @@ DB_VERSION=12
 DB_PASSWORD=Un53cur3Pa55w0rd
 
 AUTH_STRATEGY=auth_remote_ldap
-LDAP_HOST=eaxum-ldap
+LDAP_HOST=colory-ldap
 LDAP_PORT=389
-LDAP_BASE_DN=ou=users,dc=eaxum,dc=com
-LDAP_DOMAIN=eaxum.com
+LDAP_BASE_DN=ou=users,dc=colory,dc=com
+LDAP_DOMAIN=colory.com
 LDAP_FALLBACK=False
 LDAP_USER=super-user
-LDAP_PASSWORD=eaxumdef0007
-LDAP_EMAIL_DOMAIN=eaxum.com
+LDAP_PASSWORD=colorydef0007
+LDAP_EMAIL_DOMAIN=colory.com
 EVENT_HANDLERS_FOLDER=/usr/local/lib/python3.7/site-packages/zou/app/services/genesys_addon
 
-AuthLDAPURL=ldap://eaxum-ldap:389/DC=eaxum,DC=com?uid
-AuthLDAPBindDN=uid=super-user,ou=users,dc=eaxum,dc=com
-AuthLDAPBindPassword=eaxumdef0007
+AuthLDAPURL=ldap://colory-ldap:389/DC=colory,DC=com?uid
+AuthLDAPBindDN=uid=super-user,ou=users,dc=colory,dc=com
+AuthLDAPBindPassword=colorydef0007
 #RequireLDAPGroup=
 
 PYTHONUNBUFFERED=TRUE
@@ -55,7 +55,7 @@ PYTHONUNBUFFERED=TRUE
 PGADMIN_DEFAULT_PASSWORD=SuperSecret
 PGADMIN_DEFAULT_EMAIL=user@domain.com
 
-PHPLDAPADMIN_LDAP_HOSTS=eaxum-ldap
+PHPLDAPADMIN_LDAP_HOSTS=colory-ldap
 PHPLDAPADMIN_HTTPS=false
 
 SVN_DATA_LOCATION=/path/to/store/svn

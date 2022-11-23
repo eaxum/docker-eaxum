@@ -82,15 +82,15 @@ services:
         <<: *base
         image: osixia/openldap:1.4.0
         restart: always
-        container_name: eaxum-ldap
-        hostname: eaxum-ldap
+        container_name: colory-ldap
+        hostname: colory-ldap
         environment:
-            - LDAP_ORGANISATION=eaxum
-            - LDAP_DOMAIN=eaxum.com
+            - LDAP_ORGANISATION=colory
+            - LDAP_DOMAIN=colory.com
             - LDAP_ADMIN_USERNAME=admin
             - LDAP_ADMIN_PASSWORD=admin
             - LDAP_CONFIG_PASSWORD=config_pass
-            - LDAP_BASE_DN=dc=eaxum,dc=com
+            - LDAP_BASE_DN=dc=colory,dc=com
             - LDAP_READONLY_USER=false
             - LDAP_TLS=false
             - LDAP_TLS_VERIFY_CLIENT=never
@@ -118,11 +118,11 @@ services:
         ports: 
             - "8002:80"
         environment: 
-            - SERVER_HOSTNAME=eaxum-ldap
-            - LDAP_URI=ldap://eaxum-ldap
-            - LDAP_BASE_DN=dc=eaxum,dc=com
+            - SERVER_HOSTNAME=colory-ldap
+            - LDAP_URI=ldap://colory-ldap
+            - LDAP_BASE_DN=dc=colory,dc=com
             - LDAP_ADMINS_GROUP=admins
-            - LDAP_ADMIN_BIND_DN=cn=admin,dc=eaxum,dc=com
+            - LDAP_ADMIN_BIND_DN=cn=admin,dc=colory,dc=com
             - LDAP_ADMIN_BIND_PWD=admin
             - LDAP_IGNORE_CERT_ERRORS=true
             - LDAP_USER_OU=users

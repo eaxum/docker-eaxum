@@ -66,10 +66,10 @@ function init_zou() {
 
 function init_ldap() {
     echo "${GREEN}INIT LDAP"
-    docker cp ./ldap_acl.ldif  eaxum-ldap:/tmp/ldap_acl.ldif
-    docker cp ./ldap_default.ldif  eaxum-ldap:/tmp/ldap_default.ldif
-    docker exec eaxum-ldap ldapmodify  -Y EXTERNAL -H ldapi:/// -f /tmp/ldap_acl.ldif
-    docker exec eaxum-ldap ldapmodify  -Y EXTERNAL -H ldapi:/// -f /tmp/ldap_default.ldif
+    docker cp ./ldap_acl.ldif  colory-ldap:/tmp/ldap_acl.ldif
+    docker cp ./ldap_default.ldif  colory-ldap:/tmp/ldap_default.ldif
+    docker exec colory-ldap ldapmodify  -Y EXTERNAL -H ldapi:/// -f /tmp/ldap_acl.ldif
+    docker exec colory-ldap ldapmodify  -Y EXTERNAL -H ldapi:/// -f /tmp/ldap_default.ldif
     ./sync_ldap.sh
     sleep 2
     docker compose exec -T db  psql -U postgres zoudb -c "UPDATE person SET role = 'admin' WHERE desktop_login = 'super-user';"

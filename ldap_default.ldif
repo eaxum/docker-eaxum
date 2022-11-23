@@ -1,7 +1,7 @@
 version: 1
 
-# Entry 3: cn=lastGID,dc=eaxum,dc=com
-dn: cn=lastGID,dc=eaxum,dc=com
+# Entry 3: cn=lastGID,dc=colory,dc=com
+dn: cn=lastGID,dc=colory,dc=com
 changetype: add
 cn: lastGID
 description: Records the last GID used to create a Posix group. This prevent
@@ -10,8 +10,8 @@ objectclass: device
 objectclass: top
 serialnumber: 2002
 
-# Entry 4: cn=lastUID,dc=eaxum,dc=com
-dn: cn=lastUID,dc=eaxum,dc=com
+# Entry 4: cn=lastUID,dc=colory,dc=com
+dn: cn=lastUID,dc=colory,dc=com
 changetype: add
 cn: lastUID
 description: Records the last UID used to create a Posix account. This preve
@@ -20,14 +20,14 @@ objectclass: device
 objectclass: top
 serialnumber: 2001
 
-# Entry 5: ou=groups,dc=eaxum,dc=com
-dn: ou=groups,dc=eaxum,dc=com
+# Entry 5: ou=groups,dc=colory,dc=com
+dn: ou=groups,dc=colory,dc=com
 changetype: add
 objectclass: organizationalUnit
 ou: groups
 
-# Entry 6: cn=admins,ou=groups,dc=eaxum,dc=com
-dn: cn=admins,ou=groups,dc=eaxum,dc=com
+# Entry 6: cn=admins,ou=groups,dc=colory,dc=com
+dn: cn=admins,ou=groups,dc=colory,dc=com
 changetype: add
 cn: admins
 gidnumber: 2002
@@ -35,10 +35,10 @@ objectclass: top
 objectclass: groupOfUniqueNames
 objectclass: posixGroup
 uniquemember: 
-uniquemember: uid=super-user,ou=users,dc=eaxum,dc=com
+uniquemember: uid=super-user,ou=users,dc=colory,dc=com
 
-# Entry 7: cn=users,ou=groups,dc=eaxum,dc=com
-dn: cn=users,ou=groups,dc=eaxum,dc=com
+# Entry 7: cn=users,ou=groups,dc=colory,dc=com
+dn: cn=users,ou=groups,dc=colory,dc=com
 changetype: add
 cn: users
 gidnumber: 2001
@@ -46,16 +46,16 @@ objectclass: top
 objectclass: groupOfUniqueNames
 objectclass: posixGroup
 uniquemember: 
-uniquemember: uid=super-user,ou=users,dc=eaxum,dc=com
+uniquemember: uid=super-user,ou=users,dc=colory,dc=com
 
-# Entry 8: ou=users,dc=eaxum,dc=com
-dn: ou=users,dc=eaxum,dc=com
+# Entry 8: ou=users,dc=colory,dc=com
+dn: ou=users,dc=colory,dc=com
 changetype: add
 objectclass: organizationalUnit
 ou: users
 
-# Entry 9: uid=super-user,ou=users,dc=eaxum,dc=com
-dn: uid=super-user,ou=users,dc=eaxum,dc=com
+# Entry 9: uid=super-user,ou=users,dc=colory,dc=com
+dn: uid=super-user,ou=users,dc=colory,dc=com
 changetype: add
 cn: super user
 displayname: super user
