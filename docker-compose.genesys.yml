@@ -18,7 +18,7 @@ services:
         image: eaxum/genesys:$GENESYS_VERSION
         command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :5002 genesys.app:app"
         volumes:
-            - /home/asuna/eaxum/genesys/genesys/:/usr/local/python3.10/site-packages/genesys
+            - /home/asuna/eaxum/genesys/genesys/:/usr/local/lib/python3.10/site-packages/genesys
             - svn_data:/opt/svn
     
     genesys-jobs:
@@ -26,7 +26,7 @@ services:
         <<: *env
         # user: root
         volumes:
-            - /home/asuna/eaxum/genesys/genesys/:/usr/local/python3.10/site-packages/genesys
+            - /home/asuna/eaxum/genesys/genesys/:/usr/local/lib/python3.10/site-packages/genesys
             - svn_data:/opt/svn
         container_name: ${COMPOSE_PROJECT_NAME}-genesys-jobs
         image: eaxum/genesys:$GENESYS_VERSION
