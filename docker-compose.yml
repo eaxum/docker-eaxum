@@ -13,8 +13,8 @@ x-backend-volumes: &backend_volumes
     volumes:
         - 'previews:${PREVIEW_FOLDER:?}'
         - 'tmp:${TMP_DIR:-/tmp/zou}'
-        # - /home/asuna/aderemi-adesada/genesys_kitsu_addon/event_handlers/:/usr/local/lib/python3.7/site-packages/zou/app/services/genesys_addon/event_handlers
-        - genesys_addon:/usr/local/lib/python3.7/site-packages/zou/app/services/genesys_addon/event_handlers
+        - /home/asuna/aderemi-adesada/genesys_kitsu_addon/event_handlers/:/usr/local/lib/python3.7/site-packages/zou/app/services/genesys_addon/event_handlers
+        # - genesys_addon:/usr/local/lib/python3.7/site-packages/zou/app/services/genesys_addon/event_handlers
 
 services:
     kitsu:
@@ -158,13 +158,13 @@ volumes:
         name: ${COMPOSE_PROJECT_NAME:?}-previews
     tmp:
         name: ${COMPOSE_PROJECT_NAME:?}-tmp
-    genesys_addon:
-        name: genesys_addon
-        driver: local
-        driver_opts:
-          type: 'none'
-          o: 'bind'
-          device: /home/asuna/aderemi-adesada/genesys_kitsu_addon/event_handlers/
+    # genesys_addon:
+    #     name: genesys_addon
+    #     driver: local
+    #     driver_opts:
+    #       type: 'none'
+    #       o: 'bind'
+    #       device: /home/asuna/aderemi-adesada/genesys_kitsu_addon/event_handlers/
         
 
 networks:
