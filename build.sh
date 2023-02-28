@@ -20,24 +20,24 @@ function build_images() {
         echo "${ERROR}Kitsu and Zou Dockerfiles required"
         exit 1
     fi
-    docker-compose -f docker-compose.yml -f docker-compose.build.yml build --force-rm --pull --compress
+    docker compose -f docker-compose.yml -f docker-compose.build.yml build --force-rm --pull --compress
 }
 
 
 function compose_up() {
     echo "${YELLOW}START CONTAINERS"
     if [ ${BUILD} == 1 ]; then
-        eval "docker-compose -f docker-comp-g ose.yml $nextcloud_file $genesys_file -f docker-compose.build.yml  up -d"
+        eval "docker compose -f docker-compose.yml $nextcloud_file $genesys_file -f docker-compose.build.yml  up -d"
     else
-        # eval "docker-compose -f docker-compose.yml $nextcloud_file $genesys_file pull --include-deps"
-        eval "docker-compose -f docker-compose.yml $nextcloud_file $genesys_file up -d"
+        # eval "docker compose -f docker-compose.yml $nextcloud_file $genesys_file pull --include-deps"
+        eval "docker compose -f docker-compose.yml $nextcloud_file $genesys_file up -d"
     fi
     if [[ "${ENABLE_JOB_QUEUE}" != "True" ]]; then
         echo "${YELLOW}DISABLE ZOU ASYNC JOBS"
-        docker-compose stop zou-jobs
+        docker compose stop zou-jobs
     fi
 
-    until docker-compose exec -T db pg_isready ; do
+    until docker compose exec -T db pg_isready ; do
         sleep 3
         echo "${YELLOW}Waiting for db..."
     done
@@ -46,7 +46,7 @@ function compose_up() {
 
 function compose_down() {
     echo "${YELLOW}STOP CONTAINERS"
-    eval "docker-compose -f docker-compose.yml $nextcloud_file $genesys_file down"
+    eval "docker compose -f docker-compose.yml $nextcloud_file $genesys_file down"
 }
 
 
@@ -54,13 +54,13 @@ function init_zou() {
     dbowner=postgres
     dbname=zoudb
     
-    if docker-compose exec -T db psql -U ${dbowner} ${dbname} -c '' 2>&1; then
+    if docker compose exec -T db psql -U ${dbowner} ${dbname} -c '' 2>&1; then
         echo "${GREEN}UPGRADE ZOU"
-        docker-compose exec -T zou-app sh upgrade_zou.sh
+        docker compose exec -T zou-app sh upgrade_zou.sh
     else
         echo "${GREEN}INIT ZOU"
-        docker-compose exec -T db  su - postgres -c "createdb -T template0 -E UTF8 --owner ${dbowner} ${dbname}"
-        docker-compose exec -T zou-app sh init_zou.sh
+        docker compose exec -T db  su - postgres -c "createdb -T template0 -E UTF8 --owner ${dbowner} ${dbname}"
+        docker compose exec -T zou-app sh init_zou.sh
     fi
 }
 
@@ -72,7 +72,7 @@ function init_ldap() {
     docker exec eaxum-ldap ldapmodify  -Y EXTERNAL -H ldapi:/// -f /tmp/ldap_default.ldif
     ./sync_ldap.sh
     sleep 2
-    docker-compose exec -T db  psql -U postgres zoudb -c "UPDATE person SET role = 'admin' WHERE desktop_login = 'super-user';"
+    docker compose exec -T db  psql -U postgres zoudb -c "UPDATE person SET role = 'admin' WHERE desktop_login = 'super-user';"
 }
 
 # --------------------------------------------------------------
