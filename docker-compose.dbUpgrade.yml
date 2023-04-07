@@ -1,13 +1,10 @@
 version: '3.5'
 
-x-base: &base
-    restart: always
-    networks:
-        - internal
-
 services:
     old-db:
-        <<: *base
+        restart: always
+        networks:
+            - internal
         container_name: ${COMPOSE_PROJECT_NAME:?}-db-${OLD_VERSION:?}
         image: postgres:${OLD_VERSION:?}-alpine
         volumes:
@@ -15,7 +12,9 @@ services:
         environment:
             - POSTGRES_HOST_AUTH_METHOD=trust
     new-db:
-        <<: *base
+        restart: always
+        networks:
+            - internal
         container_name: ${COMPOSE_PROJECT_NAME:?}-db-${NEW_VERSION:?}
         image: postgres:${NEW_VERSION:?}-alpine
         volumes:

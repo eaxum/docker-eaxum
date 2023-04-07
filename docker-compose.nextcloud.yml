@@ -1,21 +1,13 @@
 version: '3.5'
 
-x-base: &base
-    restart: always
-    networks:
-        - internal
-
-x-env: &env
-    env_file:
-        - ${ENV_FILE}
-
 services:  
     nextcloud_db:
-        <<: *base
+        restart: always
+        networks:
+            - internal
         image: postgres:12-alpine
         container_name: nextcloud-db
         hostname: nextcloud-db
-        restart: always
         volumes:
             - nextcloud_db:/var/lib/postgresql/data
         environment:
@@ -24,7 +16,9 @@ services:
             - POSTGRES_PASSWORD=mypassword
 
     nextcloud:
-        <<: *base
+        restart: always
+        networks:
+            - internal
         image: nextcloud:20.0.7-apache
         container_name: nextcloud
         hostname: nextcloud
