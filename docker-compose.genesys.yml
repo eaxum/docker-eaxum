@@ -1,18 +1,12 @@
 version: '3.5'
 
-x-base: &base
-    restart: always
-    networks:
-        - internal
-
-x-env: &env
-    env_file:
-        - ${ENV_FILE}
-
 services:
     genesys:
-        <<: *base
-        <<: *env
+        restart: always
+        networks:
+            - internal
+        env_file:
+            - ${ENV_FILE}
         # user: root
         container_name: ${COMPOSE_PROJECT_NAME}-genesys
         image: eaxum/genesys:$GENESYS_VERSION
@@ -21,8 +15,11 @@ services:
             - svn_data:/opt/svn
     
     genesys-jobs:
-        <<: *base
-        <<: *env
+        restart: always
+        networks:
+            - internal
+        env_file:
+            - ${ENV_FILE}
         # user: root
         volumes:
             - svn_data:/opt/svn
@@ -44,8 +41,11 @@ services:
     #     volumes:
     #         - svn_data:/home/svnedge/csvn/data
     svn:
-        <<: *base
-        <<: *env
+        restart: always
+        networks:
+            - internal
+        env_file:
+            - ${ENV_FILE}
         image: eaxum/svn:0.0.8
         container_name: ${COMPOSE_PROJECT_NAME}-svn
         hostname: svn

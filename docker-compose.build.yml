@@ -1,15 +1,5 @@
 version: '3.5'
 
-
-x-zou-build: &zou-build
-    image: eaxum/zou:${ZOU_VERSION:-latest}
-    build:
-        context: ./zou
-        args:
-            ZOU_VERSION: ${ZOU_VERSION:-latest}
-            PREVIEW_FOLDER: ${PREVIEW_FOLDER:?}
-            TMP_DIR: ${TMP_DIR:-/tmp/zou}
-
 services:
     kitsu:
         image: eaxum/kitsu:${KITSU_VERSION:-latest}
@@ -19,13 +9,31 @@ services:
                 KITSU_VERSION: ${KITSU_VERSION:-latest}
 
     zou-app:
-        <<: *zou-build
+        image: eaxum/zou:${ZOU_VERSION:-latest}
+        build:
+            context: ./zou
+            args:
+                ZOU_VERSION: ${ZOU_VERSION:-latest}
+                PREVIEW_FOLDER: ${PREVIEW_FOLDER:?}
+                TMP_DIR: ${TMP_DIR:-/tmp/zou}
 
     zou-event:
-        <<: *zou-build
+        image: eaxum/zou:${ZOU_VERSION:-latest}
+        build:
+            context: ./zou
+            args:
+                ZOU_VERSION: ${ZOU_VERSION:-latest}
+                PREVIEW_FOLDER: ${PREVIEW_FOLDER:?}
+                TMP_DIR: ${TMP_DIR:-/tmp/zou}
        
     zou-jobs:
-        <<: *zou-build
+        image: eaxum/zou:${ZOU_VERSION:-latest}
+        build:
+            context: ./zou
+            args:
+                ZOU_VERSION: ${ZOU_VERSION:-latest}
+                PREVIEW_FOLDER: ${PREVIEW_FOLDER:?}
+                TMP_DIR: ${TMP_DIR:-/tmp/zou}
 
     genesys:
         image: eaxum/genesys:$GENESYS_VERSION

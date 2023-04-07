@@ -1,23 +1,12 @@
 version: '3.5'
 
-x-base: &base
-    restart: always
-    networks:
-        - internal
-
-x-env: &env
-    env_file:
-        - ${ENV_FILE:-./env}
-
-x-backend-volumes: &backend_volumes
-    volumes:
-        - 'previews:${PREVIEW_FOLDER:?}'
-        - 'tmp:${TMP_DIR:-/tmp/zou}'
-
 services:
     kitsu:
-        <<: *base
-        <<: *env
+        restart: always
+        networks:
+            - internal
+        env_file:
+            - ${ENV_FILE:-./env}
         container_name: ${COMPOSE_PROJECT_NAME:?}-kitsu
         image: eaxum/kitsu:${KITSU_VERSION:-latest}
         depends_on:
@@ -30,31 +19,46 @@ services:
             - '${PORT:-83}:80'
 
     zou-app:
-        <<: *base
-        <<: *env
+        restart: always
+        networks:
+            - internal
+        env_file:
+            - ${ENV_FILE:-./env}
         container_name: ${COMPOSE_PROJECT_NAME:?}-zou-app
         image: eaxum/zou:${ZOU_VERSION:-latest}
         depends_on:
           - db
-        <<: *backend_volumes
+        volumes:
+            - 'previews:${PREVIEW_FOLDER:?}'
+            - 'tmp:${TMP_DIR:-/tmp/zou}'
         command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :5000 zou.app:app"
 
     zou-event:
-        <<: *base
-        <<: *env
+        restart: always
+        networks:
+            - internal
+        env_file:
+            - ${ENV_FILE:-./env}
         container_name: ${COMPOSE_PROJECT_NAME:?}-zou-event
         image: eaxum/zou:${ZOU_VERSION:-latest}
-        <<: *backend_volumes
+        volumes:
+            - 'previews:${PREVIEW_FOLDER:?}'
+            - 'tmp:${TMP_DIR:-/tmp/zou}'
         depends_on:
           - redis
         command: "gunicorn --error-logfile - --access-logfile - -w 3 -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -b :5001 zou.event_stream:app"
 
     zou-jobs:
-        <<: *base
-        <<: *env
+        restart: always
+        networks:
+            - internal
+        env_file:
+            - ${ENV_FILE:-./env}
         container_name: ${COMPOSE_PROJECT_NAME:?}-zou-jobs
         image: eaxum/zou:${ZOU_VERSION:-latest}
-        <<: *backend_volumes
+        volumes:
+            - 'previews:${PREVIEW_FOLDER:?}'
+            - 'tmp:${TMP_DIR:-/tmp/zou}'
         depends_on:
             - redis
         command: "rq worker -c zou.job_settings"
@@ -62,7 +66,9 @@ services:
     db:
         # ports:
         #     - '5432:5432'
-        <<: *base
+        restart: always
+        networks:
+            - internal
         container_name: ${COMPOSE_PROJECT_NAME:?}-db-${DB_VERSION:?}
         image: postgres:${DB_VERSION:?}-alpine
         volumes:
@@ -72,16 +78,19 @@ services:
             - POSTGRES_PASSWORD=${DB_PASSWORD:?}
 
     redis:
-        <<: *base
+        restart: always
+        networks:
+            - internal
         container_name: ${COMPOSE_PROJECT_NAME:?}-redis
         image: redis:alpine
         volumes:
             - 'redis:/data'
     
     openldap:
-        <<: *base
-        image: osixia/openldap:1.4.0
         restart: always
+        networks:
+            - internal
+        image: osixia/openldap:1.4.0
         container_name: eaxum-ldap
         hostname: eaxum-ldap
         environment:
@@ -100,8 +109,11 @@ services:
             - ldap_config:/etc/ldap/slapd.d
     
     phpldapadmin:
-        <<: *base
-        <<: *env
+        restart: always
+        networks:
+            - internal
+        env_file:
+            - ${ENV_FILE:-./env}
         image: osixia/phpldapadmin:0.9.0
         container_name: phpldapadmin
         hostname: phpldapadmin
@@ -111,7 +123,9 @@ services:
             - openldap
 
     ldap-manager:
-        <<: *base
+        restart: always
+        networks:
+            - internal
         image: wheelybird/ldap-user-manager:v1.5
         container_name: ldap-manager
         hostname: ldap-manager
@@ -132,7 +146,9 @@ services:
             - openldap
    
     nginx:
-        <<: *base
+        restart: always
+        networks:
+            - internal
         image: nginx:1.19.7
         container_name: nginx
         hostname: nginx
