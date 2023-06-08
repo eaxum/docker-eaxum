@@ -1,0 +1,31 @@
+version: '3.5'
+services:
+    openldap:
+        image: osixia/openldap:1.4.0
+        restart: always
+        container_name: ${COMPOSE_PROJECT_NAME:?}-ldap
+        # hostname: eaxum-ldap
+        environment:
+            - LDAP_ORGANISATION=eaxum
+            - LDAP_DOMAIN=eaxum.com
+            - LDAP_ADMIN_USERNAME=admin
+            - LDAP_ADMIN_PASSWORD=admin
+            - LDAP_CONFIG_PASSWORD=config_pass
+            - LDAP_BASE_DN=dc=eaxum,dc=com
+            - LDAP_READONLY_USER=false
+            - LDAP_TLS=false
+            - LDAP_TLS_VERIFY_CLIENT=never
+            - LDAP_RFC2307BIS_SCHEMA=true
+
+            #- LDAP_SYNCREPL="rid=002 provider=ldap://ldap1.example.com bindmethod=simple binddn='cn=admin,dc=example,dc=com' credentials=admin searchbase='dc=example,dc=com' schemachecking=off type=refreshAndPersist retry='5 5 300 5' interval=00:00:05:00"
+            #- LDAP_SYNCREPL_READONLY_USER=syncuser
+            #- LDAP_SYNCREPL_READONLY_USER_PASSWORD=syncpassword
+        volumes:
+            - ldap_data_base:/var/lib/ldap
+            - ldap_config:/etc/ldap/slapd.d
+    
+volumes:
+    ldap_data_base:
+        name: eaxum-ldap_data_base
+    ldap_config:
+        name: eaxum-ldap_config

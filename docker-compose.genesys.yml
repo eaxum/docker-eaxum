@@ -20,6 +20,8 @@ services:
         volumes:
             - /home/asuna/eaxum/genesys/genesys/:/usr/local/lib/python3.10/site-packages/genesys
             - svn_data:/opt/svn
+        ports: 
+            - "5000:5002"
     
     genesys-jobs:
         <<: *base
@@ -56,7 +58,7 @@ services:
         
 volumes:
     svn_data:
-        name: svn_data
+        name: ${COMPOSE_PROJECT_NAME:?}-svn-data
         # driver: local
         # driver_opts:
         #   type: 'none'
