@@ -68,6 +68,7 @@ function init_genesys() {
     dbowner=postgres
     dbname=genesysdb
 
+    echo "${GREEN}INIT GENESYS"
     docker compose exec -T genesys sh init_genesys.sh
 }
 
@@ -166,6 +167,6 @@ if [ $DOWN == 0 ]; then
 
     compose_up
     init_zou
-    # init_genesys
+    init_genesys
     init_ldap
 fi

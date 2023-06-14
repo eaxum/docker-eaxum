@@ -18,8 +18,7 @@ x-backend-volumes: &backend_volumes
 
 services:
     kitsu:
-        <<: *base
-        <<: *env
+        <<: [*base, *env]
         container_name: ${COMPOSE_PROJECT_NAME:?}-kitsu
         image: eaxum/kitsu:${KITSU_VERSION:-latest}
         depends_on:
@@ -32,31 +31,25 @@ services:
             - '${PORT:-83}:80'
 
     zou-app:
-        <<: *base
-        <<: *env
+        <<: [*base, *env, *backend_volumes]
         container_name: ${COMPOSE_PROJECT_NAME:?}-zou-app
         image: eaxum/zou:${ZOU_VERSION:-latest}
         depends_on:
           - db
-        <<: *backend_volumes
         command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :5000 zou.app:app"
 
     zou-event:
-        <<: *base
-        <<: *env
+        <<: [*base, *env, *backend_volumes]
         container_name: ${COMPOSE_PROJECT_NAME:?}-zou-event
         image: eaxum/zou:${ZOU_VERSION:-latest}
-        <<: *backend_volumes
         depends_on:
           - redis
         command: "gunicorn --error-logfile - --access-logfile - -w 3 -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -b :5001 zou.event_stream:app"
 
     zou-jobs:
-        <<: *base
-        <<: *env
+        <<: [*base, *env, *backend_volumes]
         container_name: ${COMPOSE_PROJECT_NAME:?}-zou-jobs
         image: eaxum/zou:${ZOU_VERSION:-latest}
-        <<: *backend_volumes
         depends_on:
             - redis
         command: "rq worker -c zou.job_settings"
@@ -108,8 +101,7 @@ services:
             - ldap_config:/etc/ldap/slapd.d
     
     phpldapadmin:
-        <<: *base
-        <<: *env
+        <<: [*base, *env]
         image: osixia/phpldapadmin:0.9.0
         container_name: ${COMPOSE_PROJECT_NAME:?}-phpldapadmin
         # hostname: phpldapadmin

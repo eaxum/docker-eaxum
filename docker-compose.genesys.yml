@@ -9,27 +9,26 @@ x-env: &env
     env_file:
         - ${ENV_FILE}
 
+x-backend-volumes: &backend_volumes
+    volumes:
+        - 'templates:${TEMPLATE_FOLDER:?}'
+        - /home/asuna/eaxum/genesys/genesys/:/usr/local/lib/python3.10/site-packages/genesys
+        - svn_data:/opt/svn
+        # - genesys_addon:/usr/local/lib/python3.7/site-packages/zou/app/services/genesys_addon/event_handlers
+
 services:
     genesys:
-        <<: *base
-        <<: *env
+        <<: [*base, *env, *backend_volumes]
         # user: root
         container_name: ${COMPOSE_PROJECT_NAME}-genesys
         image: eaxum/genesys:$GENESYS_VERSION
         command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :5002 genesys.app:app"
-        volumes:
-            - /home/asuna/eaxum/genesys/genesys/:/usr/local/lib/python3.10/site-packages/genesys
-            - svn_data:/opt/svn
         ports: 
             - "5000:5002"
     
     genesys-jobs:
-        <<: *base
-        <<: *env
+        <<: [*base, *env, *backend_volumes]
         # user: root
-        volumes:
-            - /home/asuna/eaxum/genesys/genesys/:/usr/local/lib/python3.10/site-packages/genesys
-            - svn_data:/opt/svn
         container_name: ${COMPOSE_PROJECT_NAME}-genesys-jobs
         image: eaxum/genesys:$GENESYS_VERSION
         command: "rq worker -c genesys.job_settings"
@@ -48,8 +47,7 @@ services:
     #     volumes:
     #         - svn_data:/home/svnedge/csvn/data
     svn:
-        <<: *base
-        <<: *env
+        <<: [*base, *env]
         image: eaxum/svn:0.0.8
         container_name: ${COMPOSE_PROJECT_NAME}-svn
         hostname: svn
@@ -57,6 +55,8 @@ services:
             - svn_data:/var/svn
         
 volumes:
+    templates:
+        name: ${COMPOSE_PROJECT_NAME:?}-templates
     svn_data:
         name: ${COMPOSE_PROJECT_NAME:?}-svn-data
         # driver: local

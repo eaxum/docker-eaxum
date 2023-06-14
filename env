@@ -30,6 +30,7 @@ SVN_SERVER_PARENT_URL=http://localhost/svn
 #EVENT_HANDLERS_FOLDER=/opt/zou/plugins
 ENABLE_JOB_QUEUE=True
 PREVIEW_FOLDER=/opt/zou/previews
+TEMPLATE_FOLDER=/opt/genesys/templates
 TMP_DIR=/tmp/zou
 
 EVENT_STREAM_HOST=eaxum-zou-event
