@@ -64,6 +64,13 @@ function init_zou() {
     fi
 }
 
+function init_genesys() {
+    dbowner=postgres
+    dbname=genesysdb
+
+    docker compose exec -T genesys sh init_genesys.sh
+}
+
 function init_ldap() {
     echo "${GREEN}INIT LDAP"
     docker cp ./ldap_acl.ldif  eaxum-ldap:/tmp/ldap_acl.ldif
@@ -159,5 +166,6 @@ if [ $DOWN == 0 ]; then
 
     compose_up
     init_zou
+    # init_genesys
     init_ldap
 fi
