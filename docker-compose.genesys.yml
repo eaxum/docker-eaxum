@@ -1,12 +1,17 @@
 version: '3.5'
 
+x-base: &base
+    restart: always
+    networks:
+        - internal
+
+x-env: &env
+    env_file:
+        - ${ENV_FILE:-./env}
+
 services:
     genesys:
-        restart: always
-        networks:
-            - internal
-        env_file:
-            - ${ENV_FILE}
+        <<: [*base, *env]
         # user: root
         container_name: ${COMPOSE_PROJECT_NAME}-genesys
         image: eaxum/genesys:$GENESYS_VERSION
@@ -15,11 +20,7 @@ services:
             - svn_data:/opt/svn
     
     genesys-jobs:
-        restart: always
-        networks:
-            - internal
-        env_file:
-            - ${ENV_FILE}
+        <<: [*base, *env]
         # user: root
         volumes:
             - svn_data:/opt/svn
@@ -27,25 +28,8 @@ services:
         image: eaxum/genesys:$GENESYS_VERSION
         command: "rq worker -c genesys.job_settings"
     
-    # svn:
-    #     <<: *base
-    #     <<: *env
-    #     image: svnedge/app:6.0.2-9
-    #     container_name: svnedge
-    #     hostname: svnedge
-    #     ports:
-    #         - "18080:18080"
-    #         - "3343:3343"
-    #     environment:
-    #         SET_PERMS: "true"
-    #     volumes:
-    #         - svn_data:/home/svnedge/csvn/data
     svn:
-        restart: always
-        networks:
-            - internal
-        env_file:
-            - ${ENV_FILE}
+        <<: [*base, *env]
         image: eaxum/svn:0.0.8
         container_name: ${COMPOSE_PROJECT_NAME}-svn
         hostname: svn
@@ -55,8 +39,3 @@ services:
 volumes:
     svn_data:
         name: svn_data
-        # driver: local
-        # driver_opts:
-        #   type: 'none'
-        #   o: 'bind'
-        #   device: ${SVN_DATA_LOCATION}

@@ -35,9 +35,9 @@ services:
                 PREVIEW_FOLDER: ${PREVIEW_FOLDER:?}
                 TMP_DIR: ${TMP_DIR:-/tmp/zou}
 
-    genesys:
-        image: eaxum/genesys:$GENESYS_VERSION
-        build:
-            context: ./genesys
-            args:
-                GENESYS_VERSION: ${GENESYS_VERSION}
+    # genesys:
+    #     image: eaxum/genesys:$GENESYS_VERSION
+    #     build:
+    #         context: ./genesys
+    #         args:
+    #             GENESYS_VERSION: ${GENESYS_VERSION}
