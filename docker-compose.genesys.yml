@@ -19,7 +19,7 @@ x-backend-volumes: &backend_volumes
 services:
     genesys:
         <<: [*base, *env, *backend_volumes]
-        # user: root
+        user: eaxum
         container_name: ${COMPOSE_PROJECT_NAME}-genesys
         image: eaxum/genesys:$GENESYS_VERSION
         command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :5002 genesys.app:app"
@@ -28,7 +28,7 @@ services:
     
     genesys-jobs:
         <<: [*base, *env, *backend_volumes]
-        # user: root
+        user: eaxum
         container_name: ${COMPOSE_PROJECT_NAME}-genesys-jobs
         image: eaxum/genesys:$GENESYS_VERSION
         command: "rq worker -c genesys.job_settings"

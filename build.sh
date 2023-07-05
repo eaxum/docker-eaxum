@@ -68,8 +68,14 @@ function init_genesys() {
     dbowner=postgres
     dbname=genesysdb
 
-    echo "${GREEN}INIT GENESYS"
-    docker compose exec -T genesys sh init_genesys.sh
+    if docker compose exec -T db psql -U ${dbowner} ${dbname} -c '' 2>&1; then
+        echo "${GREEN}UPGRADE GENESYS"
+        docker compose exec -T genesys sh upgrade_genesys.sh
+    else
+        echo "${GREEN}INIT GENESYS"
+        docker compose exec -T db  su - postgres -c "createdb -T template0 -E UTF8 --owner ${dbowner} ${dbname}"
+        docker compose exec --user root -T genesys sh init_genesys.sh
+    fi
 }
 
 function init_ldap() {
