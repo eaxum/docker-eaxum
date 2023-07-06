@@ -15,39 +15,44 @@ x-backend-volumes: &backend_volumes
         - 'tmp:${TMP_DIR:-/tmp/zou}'
 
 services:
+    nginx:
+        <<: *base
+        image: nginx:1.19.7
+        container_name: nginx
+        hostname: nginx
+        volumes:
+            - ./nginx.conf:/etc/nginx/conf.d/default.conf
+
     kitsu:
         <<: [*base, *env]
         container_name: ${COMPOSE_PROJECT_NAME:?}-kitsu
-        image: eaxum/kitsu:${KITSU_VERSION:-latest}
+        image: registry.gitlab.com/mathbou/docker-cgwire/kitsu:${KITSU_VERSION:-latest}
         depends_on:
             - zou-app
             - zou-event
             - zou-jobs
-        ports:
-            - '${PORT:-83}:80'
 
     zou-app:
-        <<: [*base, *env, *backend_volumes]
+        <<: [*base,*env, *backend_volumes]
         container_name: ${COMPOSE_PROJECT_NAME:?}-zou-app
-        image: eaxum/zou:${ZOU_VERSION:-latest}
+        image: registry.gitlab.com/mathbou/docker-cgwire/zou:${ZOU_VERSION:-latest}
         depends_on:
           - db
+          - indexer
         command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :5000 zou.app:app"
 
     zou-event:
-        <<: [*base, *env, *backend_volumes]
+        <<: [*base, *env]
         container_name: ${COMPOSE_PROJECT_NAME:?}-zou-event
-        image: eaxum/zou:${ZOU_VERSION:-latest}
+        image: registry.gitlab.com/mathbou/docker-cgwire/zou:${ZOU_VERSION:-latest}
         depends_on:
           - redis
-        command: "gunicorn --error-logfile - --access-logfile - -w 3 -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -b :5001 zou.event_stream:app"
+        command: "gunicorn --error-logfile - --access-logfile - -w 1 -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -b :5001 zou.event_stream:app"
 
     zou-jobs:
         <<: [*base, *env, *backend_volumes]
         container_name: ${COMPOSE_PROJECT_NAME:?}-zou-jobs
-        image: eaxum/zou:${ZOU_VERSION:-latest}
-        depends_on:
-            - redis
+        image: registry.gitlab.com/mathbou/docker-cgwire/zou:${ZOU_VERSION:-latest}
         command: "rq worker -c zou.job_settings"
 
     db:
@@ -67,82 +72,27 @@ services:
         volumes:
             - 'redis:/data'
     
-    openldap:
+    indexer:
         <<: *base
-        image: osixia/openldap:1.4.0
-        container_name: eaxum-ldap
-        hostname: eaxum-ldap
+        container_name: ${COMPOSE_PROJECT_NAME:?}-indexer
+        image: getmeili/meilisearch:${INDEXER_VERSION:?}
+        volumes:
+            - 'indexer:/meili_data'
         environment:
-            - LDAP_ORGANISATION=eaxum
-            - LDAP_DOMAIN=eaxum.com
-            - LDAP_ADMIN_USERNAME=admin
-            - LDAP_ADMIN_PASSWORD=admin
-            - LDAP_CONFIG_PASSWORD=config_pass
-            - LDAP_BASE_DN=dc=eaxum,dc=com
-            - LDAP_READONLY_USER=false
-            - LDAP_TLS=false
-            - LDAP_TLS_VERIFY_CLIENT=never
-            - LDAP_RFC2307BIS_SCHEMA=true
-        volumes:
-            - ldap_data_base:/var/lib/ldap
-            - ldap_config:/etc/ldap/slapd.d
-    
-    phpldapadmin:
-        <<: [*base, *env]
-        image: osixia/phpldapadmin:0.9.0
-        container_name: phpldapadmin
-        hostname: phpldapadmin
-        ports: 
-            - "8001:80"
-        depends_on:
-            - openldap
+            - MEILI_MASTER_KEY=${INDEXER_KEY:?}
 
-    ldap-manager:
-        <<: *base
-        image: wheelybird/ldap-user-manager:v1.5
-        container_name: ldap-manager
-        hostname: ldap-manager
-        ports: 
-            - "8002:80"
-        environment: 
-            - SERVER_HOSTNAME=eaxum-ldap
-            - LDAP_URI=ldap://eaxum-ldap
-            - LDAP_BASE_DN=dc=eaxum,dc=com
-            - LDAP_ADMINS_GROUP=admins
-            - LDAP_ADMIN_BIND_DN=cn=admin,dc=eaxum,dc=com
-            - LDAP_ADMIN_BIND_PWD=admin
-            - LDAP_IGNORE_CERT_ERRORS=true
-            - LDAP_USER_OU=users
-            - DEFAULT_USER_GROUP=users
-            - NO_HTTPS=TRUE
-        depends_on:
-            - openldap
-   
-    nginx:
-        <<: *base
-        image: nginx:1.19.7
-        container_name: nginx
-        hostname: nginx
-        ports:
-            - "80:80"
-        volumes:
-            - ./nginx.conf:/etc/nginx/conf.d/default.conf
-        
 volumes:
     db:
         name: ${COMPOSE_PROJECT_NAME:?}-db-${DB_VERSION:?}
-    ldap_data_base:
-        name: ${COMPOSE_PROJECT_NAME}-ldap_data_base
-    ldap_config:
-        name: ${COMPOSE_PROJECT_NAME}-ldap_config
     redis:
         name: ${COMPOSE_PROJECT_NAME:?}-redis
     previews:
         name: ${COMPOSE_PROJECT_NAME:?}-previews
     tmp:
         name: ${COMPOSE_PROJECT_NAME:?}-tmp
+    indexer:
+        name: ${COMPOSE_PROJECT_NAME:?}-indexer
         
-
 networks:
     internal:
         name: ${COMPOSE_PROJECT_NAME:?}-internal

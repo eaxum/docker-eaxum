@@ -38,4 +38,4 @@ services:
         
 volumes:
     svn_data:
-        name: svn_data
+        name:  ${COMPOSE_PROJECT_NAME}-svn_data
