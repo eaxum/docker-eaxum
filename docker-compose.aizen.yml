@@ -1,0 +1,39 @@
+version: '3.5'
+
+x-base: &base
+    restart: always
+    networks:
+        - internal
+
+x-env: &env
+    env_file:
+        - ${ENV_FILE:-./env}
+
+services:
+    aizen-db:
+        <<: [*base, *env]
+        container_name: ${COMPOSE_PROJECT_NAME}-aizen-db
+        image: postgres:15-alpine
+        volumes:
+            - 'db:/var/lib/postgresql/data'
+            - ./db/pg_ctl.conf:/etc/postgresql/15/main/pg_ctl.conf:ro
+        environment:
+            - POSTGRES_PASSWORD=Un53cur3Pa55w0rd
+        ports:
+            - '5432:5432'
+
+    aizen:
+        <<: *base
+        container_name: ${COMPOSE_PROJECT_NAME}-aizen
+        image: eaxum/aizen:$AIZEN_VERSION
+        command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :5000 aizen.app:app"
+        ports:
+            - '82:5000'
+        environment:
+            - DB_HOST=aizen-db
+        depends_on:
+            - db
+
+volumes:
+    db:
+        name: ${COMPOSE_PROJECT_NAME}-aizen-db

@@ -50,7 +50,7 @@ function build_images() {
 
     if $DEVELOP; then
         COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 \
-        dc -f docker-compose.yml -f docker-compose.genesys.yml -f docker-compose.ldap.yml -f docker-compose.develop.yml build --force-rm --pull
+        dc -f docker-compose.yml -f docker-compose.genesys.yml -f docker-compose.ldap.yml -f docker-compose.aizen.yml -f docker-compose.develop.yml build --force-rm --pull
     else
         command -v curl 1>/dev/null || { echo "${ERROR}curl required" && exit 1; }
         command -v jq 1 >/dev/null || { echo "${ERROR}jq required" && exit 1; }
@@ -58,7 +58,7 @@ function build_images() {
         get_kitsu_version
         get_zou_version
         COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 \
-        dc -f docker-compose.yml -f docker-compose.genesys.yml -f docker-compose.ldap.yml -f docker-compose.build.yml build --force-rm --pull
+        dc -f docker-compose.yml -f docker-compose.genesys.yml -f docker-compose.ldap.yml -f docker-compose.aizen.yml -f docker-compose.build.yml build --force-rm --pull
     fi
 }
 
@@ -66,17 +66,17 @@ function build_images() {
 function compose_up() {
     echo "${YELLOW}START CONTAINERS"
     if $DEVELOP ; then
-        dc -f docker-compose.yml -f docker-compose.genesys.yml -f docker-compose.ldap.yml \
+        dc -f docker-compose.yml -f docker-compose.genesys.yml -f docker-compose.ldap.yml -f docker-compose.aizen.yml \
                        -f docker-compose.develop.yml \
                        up -d
     elif $BUILD ; then
-        dc -f docker-compose.yml -f docker-compose.genesys.yml -f docker-compose.ldap.yml \
+        dc -f docker-compose.yml -f docker-compose.genesys.yml -f docker-compose.ldap.yml -f docker-compose.aizen.yml \
                        -f docker-compose.prod.yml \
                        -f docker-compose.build.yml \
                        up -d
     else
         dc pull --include-deps
-        dc -f docker-compose.yml -f docker-compose.genesys.yml -f docker-compose.ldap.yml \
+        dc -f docker-compose.yml -f docker-compose.genesys.yml -f docker-compose.ldap.yml -f docker-compose.aizen.yml \
                        -f docker-compose.prod.yml \
                        up -d
     fi
@@ -94,7 +94,7 @@ function compose_up() {
 
 function compose_down() {
     echo "${YELLOW}STOP CONTAINERS"
-    dc down
+    dc down -f docker-compose.yml -f docker-compose.genesys.yml -f docker-compose.ldap.yml -f docker-compose.aizen.yml
 }
 
 
