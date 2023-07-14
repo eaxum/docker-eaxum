@@ -118,6 +118,26 @@ function init_zou() {
     fi
 }
 
+
+function init_aizen() {
+    dbowner=postgres
+    dbname=aizendb
+
+    if $DEVELOP && ! $KEEP_DB; then
+        echo "${MAGENTA}DROP DEV DB"
+        dc exec aizen-db  su - postgres -c "dropdb ${dbname}"
+    fi
+
+    if dc exec aizen-db psql -U ${dbowner} ${dbname} -c '' 2>&1; then
+        echo "${GREEN}UPGRADE Aizen"
+        dc exec aizen sh /upgrade_aizen.sh
+    else
+        echo "${GREEN}INIT Aizen"
+        dc exec aizen-db  su - postgres -c "createdb -T template0 -E UTF8 --owner ${dbowner} ${dbname}"
+        dc exec aizen sh /init_aizen.sh
+    fi
+}
+
 function init_genesys_addon() {
     echo "${GREEN}INIT ZOU-GENESYS ADDON"
     python3 $SWD/download_genesys_addon.py
@@ -240,5 +260,6 @@ if ! $DOWN ; then
     compose_up
     init_zou
     init_genesys_addon
+    init_aizen
     init_ldap
 fi

@@ -23,14 +23,14 @@ services:
             - '5432:5432'
 
     aizen:
-        <<: *base
+        <<: [*base, *env]
         container_name: ${COMPOSE_PROJECT_NAME}-aizen
         image: eaxum/aizen:$AIZEN_VERSION
         command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :5000 aizen.app:app"
         ports:
             - '82:5000'
         environment:
-            - DB_HOST=aizen-db
+            - AIZEN_DB_HOST=aizen-db
         depends_on:
             - db
 

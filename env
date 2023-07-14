@@ -4,8 +4,11 @@ KITSU_VERSION=0.17.7
 ZOU_VERSION=0.17.11
 AIZEN_VERSION=0.0.1
 
+ZOU_API=http://eaxum-zou-app:5000
+
 KV_HOST=redis
 DB_HOST=db
+AIZEN_DB_HOST=aizen-db
 
 ENABLE_JOB_QUEUE=True
 PREVIEW_FOLDER=/opt/zou/previews
