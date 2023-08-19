@@ -94,7 +94,11 @@ function compose_up() {
 
 function compose_down() {
     echo "${YELLOW}STOP CONTAINERS"
-    dc down -f docker-compose.yml -f docker-compose.genesys.yml -f docker-compose.ldap.yml -f docker-compose.aizen.yml
+    # dc down -f docker-compose.yml -f docker-compose.genesys.yml -f docker-compose.ldap.yml -f docker-compose.aizen.yml
+    dc down
+    # dc down -f docker-compose.genesys.yml
+    # dc down -f docker-compose.ldap.yml
+    # dc down -f docker-compose.aizen.yml
 }
 
 
@@ -130,10 +134,20 @@ function init_aizen() {
 
     if dc exec aizen-db psql -U ${dbowner} ${dbname} -c '' 2>&1; then
         echo "${GREEN}UPGRADE Aizen"
+
+        while [[ $(docker inspect -f '{{.State.Status}}' eaxum-aizen) != "running" ]]; do
+            echo "Waiting for 'aizen' container to start..."
+            sleep 2
+        done
         dc exec aizen sh /upgrade_aizen.sh
     else
         echo "${GREEN}INIT Aizen"
         dc exec aizen-db  su - postgres -c "createdb -T template0 -E UTF8 --owner ${dbowner} ${dbname}"
+        # check if aizen container is running if not sleep for to sec until its running
+        while [[ $(docker inspect -f '{{.State.Status}}' eaxum-aizen) != "running" ]]; do
+            echo "Waiting for 'aizen' container to start..."
+            sleep 2
+        done
         dc exec aizen sh /init_aizen.sh
     fi
 }
@@ -260,6 +274,6 @@ if ! $DOWN ; then
     compose_up
     init_zou
     init_genesys_addon
-    init_aizen
     init_ldap
+    init_aizen
 fi

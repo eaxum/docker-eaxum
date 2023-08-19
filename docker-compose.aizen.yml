@@ -15,7 +15,7 @@ services:
         container_name: ${COMPOSE_PROJECT_NAME}-aizen-db
         image: postgres:15-alpine
         volumes:
-            - 'db:/var/lib/postgresql/data'
+            - 'aizen-db:/var/lib/postgresql/data'
             - ./db/pg_ctl.conf:/etc/postgresql/15/main/pg_ctl.conf:ro
         environment:
             - POSTGRES_PASSWORD=Un53cur3Pa55w0rd
@@ -26,14 +26,33 @@ services:
         <<: [*base, *env]
         container_name: ${COMPOSE_PROJECT_NAME}-aizen
         image: eaxum/aizen:$AIZEN_VERSION
-        command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :5000 aizen.app:app"
+        command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :80 aizen.app:app"
         ports:
-            - '82:5000'
+            - '82:80'
         environment:
             - AIZEN_DB_HOST=aizen-db
         depends_on:
-            - db
+            - aizen-db
+            - zou-app
+
+    aizen-scheduler:
+        <<: [*base, *env]
+        container_name: ${COMPOSE_PROJECT_NAME}-aizen-scheduler
+        image: eaxum/aizen:$AIZEN_VERSION
+        command: "python -m aizen.scheduler"
+        environment:
+            - AIZEN_HOST=aizen
+        depends_on:
+            - aizen
+    # aizen-scheduler:
+    #     <<: [*base, *env]
+    #     container_name: ${COMPOSE_PROJECT_NAME}-aizen-scheduler
+    #     image: eaxum/aizen-scheduler:$AIZEN_VERSION
+    #     environment:
+    #         - AIZEN_HOST=aizen
+    #     depends_on:
+    #         - aizen
 
 volumes:
-    db:
+    aizen-db:
         name: ${COMPOSE_PROJECT_NAME}-aizen-db
