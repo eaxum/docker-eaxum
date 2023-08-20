@@ -4,6 +4,9 @@ x-base: &base
     restart: always
     networks:
         - internal
+    volumes:
+        - svn_data:/opt/svn
+        - /home/asuna/eaxum/genesys/genesys/:/usr/local/lib/python3.10/site-packages/genesys
 
 x-env: &env
     env_file:
@@ -16,14 +19,10 @@ services:
         container_name: ${COMPOSE_PROJECT_NAME}-genesys
         image: eaxum/genesys:$GENESYS_VERSION
         command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :5002 genesys.app:app"
-        volumes:
-            - svn_data:/opt/svn
     
     genesys-jobs:
         <<: [*base, *env]
         # user: root
-        volumes:
-            - svn_data:/opt/svn
         container_name: ${COMPOSE_PROJECT_NAME}-genesys-jobs
         image: eaxum/genesys:$GENESYS_VERSION
         command: "rq worker -c genesys.job_settings"
