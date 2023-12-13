@@ -6,7 +6,7 @@ x-base: &base
         - internal
     volumes:
         - svn_data:/opt/svn
-        - /home/asuna/eaxum/genesys/genesys/:/usr/local/lib/python3.10/site-packages/genesys
+        # - /home/asuna/eaxum/genesys/genesys/:/usr/local/lib/python3.10/site-packages/genesys
 
 x-env: &env
     env_file:

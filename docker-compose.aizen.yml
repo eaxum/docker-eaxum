@@ -19,8 +19,8 @@ services:
             - ./db/pg_ctl.conf:/etc/postgresql/15/main/pg_ctl.conf:ro
         environment:
             - POSTGRES_PASSWORD=Un53cur3Pa55w0rd
-        ports:
-            - '5432:5432'
+        # ports:
+        #     - '5432:5432'
 
     aizen:
         <<: [*base, *env]

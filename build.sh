@@ -62,23 +62,20 @@ function build_images() {
     fi
 }
 
-
+genesys_file="-f docker-compose.genesys.yml"
+ldap_file="-f docker-compose.ldap.yml"
+prod_file="-f docker-compose.prod.yml"
+build_file="-f docker-compose.build.yml"
+develop_file="-f docker-compose.develop.yml"
 function compose_up() {
     echo "${YELLOW}START CONTAINERS"
     if $DEVELOP ; then
-        dc -f docker-compose.yml -f docker-compose.genesys.yml -f docker-compose.ldap.yml -f docker-compose.aizen.yml \
-                       -f docker-compose.develop.yml \
-                       up -d
+        eval "dc -f docker-compose.yml $genesys_file $ldap_file $aizen_file $develop_file up -d"
     elif $BUILD ; then
-        dc -f docker-compose.yml -f docker-compose.genesys.yml -f docker-compose.ldap.yml -f docker-compose.aizen.yml \
-                       -f docker-compose.prod.yml \
-                       -f docker-compose.build.yml \
-                       up -d
+        eval "dc -f docker-compose.yml $genesys_file $ldap_file $aizen_file $prod_file $build_file up -d"
     else
         dc pull --include-deps
-        dc -f docker-compose.yml -f docker-compose.genesys.yml -f docker-compose.ldap.yml -f docker-compose.aizen.yml \
-                       -f docker-compose.prod.yml \
-                       up -d
+        eval "dc -f docker-compose.yml $genesys_file $ldap_file $aizen_file $prod_file up -d"
     fi
     if [[ "${ENABLE_JOB_QUEUE}" != "True" ]]; then
         echo "${YELLOW}DISABLE ZOU ASYNC JOBS"
@@ -199,6 +196,8 @@ esac
 export ENV_FILE=$SWD/env
 DEVELOP=false
 KEEP_DB=false
+USE_AIZEN=false
+aizen_file=""
 for i in "$@"; do
     case $i in
         -e=* | --env=*)
@@ -213,6 +212,12 @@ for i in "$@"; do
             fi
             DEVELOP=true
             echo "${MAGENTA}DEV MODE"
+            shift
+            ;;
+        --aizen)
+            USE_AIZEN=true
+            aizen_file="-f docker-compose.aizen.yml"
+            echo "${MAGENTA}USE AIZEN"
             shift
             ;;
         --keep-db)
@@ -275,5 +280,7 @@ if ! $DOWN ; then
     init_zou
     init_genesys_addon
     init_ldap
-    init_aizen
+    if $USE_AIZEN; then
+        init_aizen
+    fi
 fi
