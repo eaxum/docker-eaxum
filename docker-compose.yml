@@ -27,7 +27,7 @@ services:
     kitsu:
         <<: [*base, *env]
         container_name: ${COMPOSE_PROJECT_NAME:?}-kitsu
-        image: eaxum/kitsu:${KITSU_VERSION:-latest}
+        image: registry.gitlab.com/mathbou/docker-cgwire/kitsu:${KITSU_VERSION:-latest}
         depends_on:
             - zou-app
             - zou-event
@@ -36,7 +36,7 @@ services:
     zou-app:
         <<: [*base,*env, *backend_volumes]
         container_name: ${COMPOSE_PROJECT_NAME:?}-zou-app
-        image: eaxum/zou:${ZOU_VERSION:-latest}
+        image: registry.gitlab.com/mathbou/docker-cgwire/zou:${ZOU_VERSION:-latest}
         depends_on:
           - db
           - indexer
@@ -45,7 +45,7 @@ services:
     zou-event:
         <<: [*base, *env]
         container_name: ${COMPOSE_PROJECT_NAME:?}-zou-event
-        image: eaxum/zou:${ZOU_VERSION:-latest}
+        image: registry.gitlab.com/mathbou/docker-cgwire/zou:${ZOU_VERSION:-latest}
         depends_on:
           - redis
         command: "gunicorn --error-logfile - --access-logfile - -w 1 -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -b :5001 zou.event_stream:app"
@@ -53,7 +53,7 @@ services:
     zou-jobs:
         <<: [*base, *env, *backend_volumes]
         container_name: ${COMPOSE_PROJECT_NAME:?}-zou-jobs
-        image: eaxum/zou:${ZOU_VERSION:-latest}
+        image: registry.gitlab.com/mathbou/docker-cgwire/zou:${ZOU_VERSION:-latest}
         command: "rq worker -c zou.job_settings"
 
     db:
@@ -65,6 +65,8 @@ services:
             - ./db/pg_ctl.conf:/etc/postgresql/${DB_VERSION:?}/main/pg_ctl.conf:ro
         environment:
             - POSTGRES_PASSWORD=${DB_PASSWORD:?}
+        ports:
+            - "5432:5432"
 
     redis:
         <<: *base

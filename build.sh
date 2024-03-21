@@ -50,7 +50,7 @@ function build_images() {
 
     if $DEVELOP; then
         COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 \
-        dc -f docker-compose.yml -f docker-compose.genesys.yml -f docker-compose.ldap.yml -f docker-compose.aizen.yml -f docker-compose.develop.yml build --force-rm --pull
+        dc -f docker-compose.yml -f docker-compose.genesys.yml -f docker-compose.aizen.yml -f docker-compose.develop.yml build --force-rm --pull
     else
         command -v curl 1>/dev/null || { echo "${ERROR}curl required" && exit 1; }
         command -v jq 1 >/dev/null || { echo "${ERROR}jq required" && exit 1; }
@@ -58,24 +58,23 @@ function build_images() {
         get_kitsu_version
         get_zou_version
         COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 \
-        dc -f docker-compose.yml -f docker-compose.genesys.yml -f docker-compose.ldap.yml -f docker-compose.aizen.yml -f docker-compose.build.yml build --force-rm --pull
+        dc -f docker-compose.yml -f docker-compose.genesys.yml -f docker-compose.aizen.yml -f docker-compose.build.yml build --force-rm --pull
     fi
 }
 
 genesys_file="-f docker-compose.genesys.yml"
-ldap_file="-f docker-compose.ldap.yml"
 prod_file="-f docker-compose.prod.yml"
 build_file="-f docker-compose.build.yml"
 develop_file="-f docker-compose.develop.yml"
 function compose_up() {
     echo "${YELLOW}START CONTAINERS"
     if $DEVELOP ; then
-        eval "dc -f docker-compose.yml $genesys_file $ldap_file $aizen_file $develop_file up -d"
+        eval "dc -f docker-compose.yml $genesys_file $aizen_file $develop_file up -d"
     elif $BUILD ; then
-        eval "dc -f docker-compose.yml $genesys_file $ldap_file $aizen_file $prod_file $build_file up -d"
+        eval "dc -f docker-compose.yml $genesys_file $aizen_file $prod_file $build_file up -d"
     else
         dc pull --include-deps
-        eval "dc -f docker-compose.yml $genesys_file $ldap_file $aizen_file $prod_file up -d"
+        eval "dc -f docker-compose.yml $genesys_file $aizen_file $prod_file up -d"
     fi
     if [[ "${ENABLE_JOB_QUEUE}" != "True" ]]; then
         echo "${YELLOW}DISABLE ZOU ASYNC JOBS"
@@ -91,10 +90,9 @@ function compose_up() {
 
 function compose_down() {
     echo "${YELLOW}STOP CONTAINERS"
-    # dc down -f docker-compose.yml -f docker-compose.genesys.yml -f docker-compose.ldap.yml -f docker-compose.aizen.yml
+    # dc down -f docker-compose.yml -f docker-compose.genesys.yml -f docker-compose.aizen.yml
     dc down
     # dc down -f docker-compose.genesys.yml
-    # dc down -f docker-compose.ldap.yml
     # dc down -f docker-compose.aizen.yml
 }
 
@@ -158,17 +156,6 @@ function init_genesys_addon() {
 
     echo "${GREEN}RESTART ZOU"
     dc restart zou-app zou-jobs zou-event
-}
-
-function init_ldap() {
-    echo "${GREEN}INIT LDAP"
-    docker cp ./ldap_acl.ldif  eaxum-ldap:/tmp/ldap_acl.ldif
-    docker cp ./ldap_default.ldif  eaxum-ldap:/tmp/ldap_default.ldif
-    docker exec eaxum-ldap ldapmodify  -Y EXTERNAL -H ldapi:/// -f /tmp/ldap_acl.ldif
-    docker exec eaxum-ldap ldapmodify  -Y EXTERNAL -H ldapi:/// -f /tmp/ldap_default.ldif
-    ./sync_ldap.sh
-    sleep 2
-    docker compose exec -T db  psql -U postgres zoudb -c "UPDATE person SET role = 'admin' WHERE desktop_login = 'super-user';"
 }
 
 # --------------------------------------------------------------
@@ -279,7 +266,6 @@ if ! $DOWN ; then
     compose_up
     init_zou
     init_genesys_addon
-    init_ldap
     if $USE_AIZEN; then
         init_aizen
     fi

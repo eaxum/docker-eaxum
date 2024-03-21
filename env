@@ -1,7 +1,7 @@
 COMPOSE_PROJECT_NAME=eaxum
 
-KITSU_VERSION=0.17.7
-ZOU_VERSION=0.17.11
+#KITSU_VERSION=0.17.7
+#ZOU_VERSION=0.17.11
 
 ZOU_API=http://eaxum-zou-app:5000
 
@@ -41,22 +41,5 @@ AIZEN_DB_PASSWORD=Un53cur3Pa55w0rd
 SVN_PARENT_PATH=/opt/svn
 SVN_PARENT_URL=file:////opt/svn
 SVN_SERVER_PARENT_URL=http://localhost/svn
-
-AUTH_STRATEGY=auth_remote_ldap
-LDAP_HOST=eaxum-ldap
-LDAP_PORT=389
-LDAP_BASE_DN=ou=users,dc=eaxum,dc=com
-LDAP_DOMAIN=eaxum.com
-LDAP_FALLBACK=False
-LDAP_USER=super-user
-LDAP_PASSWORD=eaxumdef0007
-LDAP_EMAIL_DOMAIN=eaxum.com
-
-AuthLDAPURL=ldap://eaxum-ldap:389/DC=eaxum,DC=com?uid
-AuthLDAPBindDN=uid=super-user,ou=users,dc=eaxum,dc=com
-AuthLDAPBindPassword=eaxumdef0007
-
-PHPLDAPADMIN_LDAP_HOSTS=eaxum-ldap
-PHPLDAPADMIN_HTTPS=false
 
 #PYTHONUNBUFFERED=TRUE
