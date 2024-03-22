@@ -40,7 +40,7 @@ services:
         depends_on:
           - db
           - indexer
-        command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :5000 zou.app:app"
+        command: "gunicorn --error-logfile - --access-logfile - -w 9 -k gevent -b :5000 zou.app:app"
 
     zou-event:
         <<: [*base, *env]
@@ -48,7 +48,7 @@ services:
         image: registry.gitlab.com/mathbou/docker-cgwire/zou:${ZOU_VERSION:-latest}
         depends_on:
           - redis
-        command: "gunicorn --error-logfile - --access-logfile - -w 1 -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -b :5001 zou.event_stream:app"
+        command: "gunicorn --error-logfile - --access-logfile - -w 5 -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -b :5001 zou.event_stream:app"
 
     zou-jobs:
         <<: [*base, *env, *backend_volumes]
