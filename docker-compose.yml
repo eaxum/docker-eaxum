@@ -65,8 +65,8 @@ services:
             - ./db/pg_ctl.conf:/etc/postgresql/${DB_VERSION:?}/main/pg_ctl.conf:ro
         environment:
             - POSTGRES_PASSWORD=${DB_PASSWORD:?}
-        ports:
-            - "5432:5432"
+        # ports:
+        #     - "5432:5432"
 
     redis:
         <<: *base

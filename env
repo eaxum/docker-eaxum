@@ -27,7 +27,7 @@ USER_LIMIT=200
 
 EVENT_HANDLERS_FOLDER=/usr/local/lib/python3.11/site-packages/zou/app/services/genesys_addon
 
-GENESYS_VERSION=0.1.13
+GENESYS_VERSION=0.1.14
 ENABLE_GENESIS=True
 GENESIS_HOST=http://eaxum-genesys
 GENESIS_PORT=5002
