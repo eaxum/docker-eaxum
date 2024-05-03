@@ -13,7 +13,7 @@ x-backend-volumes: &backend_volumes
     volumes:
         - 'previews:${PREVIEW_FOLDER:?}'
         - 'tmp:${TMP_DIR:-/tmp/zou}'
-        - './optvolume:/opt/zou'
+        # - './optvolume:/opt/zou'
         # - /home/asuna/genesys_kitsu_addon/event_handlers/:/usr/local/lib/python3.11/site-packages/zou/app/services/genesys_addon/event_handlers
 
 services:
