@@ -31,7 +31,8 @@ GENESYS_VERSION=0.1.14
 ENABLE_GENESIS=True
 GENESIS_HOST=http://eaxum-genesys
 GENESIS_PORT=5002
-LOGIN_NAME=desktop_login
+#LOGIN_NAME=desktop_login
+LOGIN_NAME=email
 
 AIZEN_VERSION=0.0.1
 AIZEN_HOST=eaxum-aizen
